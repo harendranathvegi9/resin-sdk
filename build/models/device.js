@@ -82,6 +82,41 @@ limitations under the License.
 
 
   /**
+   * @summary Get Dashboard device URL for a device
+   * @function getDashboardUrl
+   *
+   * @param {Object} options - options
+   * @param {String} options.appId - Application id
+   * @param {String} options.deviceId - Device id
+   *
+   * @returns {String} - Dashboard URL
+   * @throws Exception if either appId or deviceId are not non-empty strings
+   *
+   * @example
+   * dashboardUrl = resin.models.device.getDashboardUrl({ appId: '012345', deviceId: '678901' })
+   */
+
+  exports.getDashboardUrl = function(options) {
+    var isNonEmptyString;
+    if (options == null) {
+      options = {};
+    }
+    return isNonEmptyString = function(str) {
+      var i, key, len, ref;
+      _.isString(str) && str.length > 0;
+      ref = ['appId', 'deviceId'];
+      for (i = 0, len = ref.length; i < len; i++) {
+        key = ref[i];
+        if (!isNonEmptyString(options[key])) {
+          throw new Error(key + " should be a non-empty string");
+        }
+      }
+      return (settings.get('dashboardUrl')) + "/apps/" + options.appId + "/devices/" + options.deviceId + "/summary";
+    };
+  };
+
+
+  /**
    * @summary Get all devices
    * @name getAll
    * @public
@@ -112,6 +147,7 @@ limitations under the License.
       }
     }).map(function(device) {
       device.application_name = device.application[0].app_name;
+      device.dashboard_url = exports.getDashboardUrl(device.application[0].id, device.id);
       return device;
     }).nodeify(callback);
   };
@@ -166,6 +202,7 @@ limitations under the License.
       });
     }).map(function(device) {
       device.application_name = device.application[0].app_name;
+      device.dashboard_url = (settings.get('dashboardUrl')) + "/apps/" + device.application[0].id + "/devices/" + device.id + "/summary";
       return device;
     }).nodeify(callback);
   };
@@ -220,7 +257,8 @@ limitations under the License.
         throw new errors.ResinAmbiguousDevice(uuid);
       }
     }).get(0).tap(function(device) {
-      return device.application_name = device.application[0].app_name;
+      device.application_name = device.application[0].app_name;
+      return device.dashboard_url = (settings.get('dashboardUrl')) + "/apps/" + device.application[0].id + "/devices/" + device.id + "/summary";
     }).nodeify(callback);
   };
 
@@ -263,6 +301,7 @@ limitations under the License.
       }
     }).map(function(device) {
       device.application_name = device.application[0].app_name;
+      device.dashboard_url = (settings.get('dashboardUrl')) + "/apps/" + device.application[0].id + "/devices/" + device.id + "/summary";
       return device;
     }).nodeify(callback);
   };
