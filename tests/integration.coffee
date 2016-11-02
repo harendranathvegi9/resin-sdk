@@ -48,6 +48,9 @@ if not _.every [
 	console.error('Missing environment credentials')
 	process.exit(1)
 
+buildDeviceDashboardUrl = (appId, deviceId) ->
+	return "#{settings.get('dashboardUrl')}/apps/#{appId}/devices/#{deviceId}/summary"
+
 describe 'SDK Integration Tests', ->
 
 	# A high timeout number prevents false alarms when
@@ -735,6 +738,11 @@ describe 'SDK Integration Tests', ->
 							m.chai.expect(devices[0].application_name).to.equal(@application.app_name)
 						.nodeify(done)
 
+					it 'should add a dashboard_url property', (done) ->
+						resin.models.device.getAll().then (devices) =>
+							m.chai.expect(devices[0].dashboard_url).to.equal(resin.models.device.getDashboardUrl(@application.id, @device.id))
+						.nodeify(done)
+
 				describe 'resin.models.device.getAllByApplication()', ->
 
 					it 'should get the device given the right application', (done) ->
@@ -746,6 +754,11 @@ describe 'SDK Integration Tests', ->
 					it 'should add an application_name property', (done) ->
 						resin.models.device.getAllByApplication(@application.app_name).then (devices) =>
 							m.chai.expect(devices[0].application_name).to.equal(@application.app_name)
+						.nodeify(done)
+
+					it 'should add a dashboard_url property', (done) ->
+						resin.models.device.getAllByApplication(@application.app_name).then (devices) =>
+							m.chai.expect(devices[0].dashboard_url).to.equal(resin.models.device.getDashboardUrl(@application.id, @device.id))
 						.nodeify(done)
 
 					it 'should be rejected if the application does not exist', ->
@@ -762,6 +775,11 @@ describe 'SDK Integration Tests', ->
 					it 'should add an application_name property', (done) ->
 						resin.models.device.get(@device.uuid).then (device) =>
 							m.chai.expect(device.application_name).to.equal(@application.app_name)
+						.nodeify(done)
+
+					it 'should add a dashboard_url property', (done) ->
+						resin.models.device.get(@device.uuid).then (device) =>
+							m.chai.expect(device.dashboard_url).to.equal(resin.models.device.getDashboardUrl(@application.id, @device.id))
 						.nodeify(done)
 
 					it 'should be rejected if the device does not exist', ->
@@ -784,6 +802,11 @@ describe 'SDK Integration Tests', ->
 					it 'should add an application_name property', (done) ->
 						resin.models.device.getByName(@device.name).then (devices) =>
 							m.chai.expect(devices[0].application_name).to.equal(@application.app_name)
+						.nodeify(done)
+
+					it 'should add a dashboard_url property', (done) ->
+						resin.models.device.getByName(@device.name).then (devices) =>
+							m.chai.expect(devices[0].dashboard_url).to.equal(resin.models.device.getDashboardUrl(@application.id, @device.id))
 						.nodeify(done)
 
 					it 'should be rejected if the device does not exist', ->

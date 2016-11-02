@@ -166,6 +166,7 @@ exports.getAllByApplication = (name, callback) ->
 	# TODO: Move to server
 	.map (device) ->
 		device.application_name = device.application[0].app_name
+		device.dashboard_url = "#{settings.get('dashboardUrl')}/apps/#{device.application[0].id}/devices/#{device.id}/summary"
 		return device
 	.nodeify(callback)
 
@@ -224,6 +225,7 @@ exports.get = (uuid, callback) ->
 	.get(0)
 	.tap (device) ->
 		device.application_name = device.application[0].app_name
+		device.dashboard_url = "#{settings.get('dashboardUrl')}/apps/#{device.application[0].id}/devices/#{device.id}/summary"
 	.nodeify(callback)
 
 ###*
@@ -261,6 +263,7 @@ exports.getByName = (name, callback) ->
 			throw new errors.ResinDeviceNotFound(name)
 	.map (device) ->
 		device.application_name = device.application[0].app_name
+		device.dashboard_url = "#{settings.get('dashboardUrl')}/apps/#{device.application[0].id}/devices/#{device.id}/summary"
 		return device
 	.nodeify(callback)
 
