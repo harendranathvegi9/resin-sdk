@@ -69,6 +69,29 @@ exports.ensureSupervisorCompatibility = ensureSupervisorCompatibility = Promise.
 		throw new Error("Incompatible supervisor version: #{version} - must be >= #{minVersion}")
 
 ###*
+# @summary Get Dashboard device URL for a device
+# @function getDashboardUrl
+#
+# @param {Object} options - options
+# @param {String} options.appId - Application id
+# @param {String} options.deviceId - Device id
+#
+# @returns {String} - Dashboard URL
+# @throws Exception if either appId or deviceId are not non-empty strings
+#
+# @example
+# dashboardUrl = resin.models.device.getDashboardUrl({ appId: '012345', deviceId: '678901' })
+###
+exports.getDashboardUrl = (options = {}) ->
+	isNonEmptyString = (str) ->
+		_.isString(str) and str.length > 0
+
+		for key in [ 'appId', 'deviceId' ]
+			throw new Error("#{key} should be a non-empty string") if not isNonEmptyString(options[key])
+
+		return "#{settings.get('dashboardUrl')}/apps/#{options.appId}/devices/#{options.deviceId}/summary"
+
+###*
 # @summary Get all devices
 # @name getAll
 # @public
@@ -98,6 +121,7 @@ exports.getAll = (callback) ->
 
 	.map (device) ->
 		device.application_name = device.application[0].app_name
+		device.dashboard_url = exports.getDashboardUrl(device.application[0].id, device.id)
 		return device
 	.nodeify(callback)
 
